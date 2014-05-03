@@ -59,8 +59,9 @@ static const CFTimeInterval PWScaleAnimationDuration    = 0.5;
 {
     [super layoutSubviews];
     
-    CGFloat centerHoleInset     = PWCenterHoleInsetRatio * CGRectGetWidth(self.bounds);
-    CGFloat progressShapeInset  = PWProgressShapeInsetRatio * CGRectGetWidth(self.bounds);
+    CGFloat positionXHoleInset     = PWCenterHoleInsetRatio * CGRectGetWidth(self.bounds);
+    CGFloat diameterHoleInset    = CGRectGetWidth(self.bounds) - (2 * positionXHoleInset);
+    CGFloat positionYHoleInset     = (CGRectGetHeight(self.bounds) - diameterHoleInset) / 2;
     
     CGRect pathRect = CGRectMake(CGPointZero.x,
                                  CGPointZero.y,
@@ -69,19 +70,18 @@ static const CFTimeInterval PWScaleAnimationDuration    = 0.5;
     
     UIBezierPath *path = [UIBezierPath bezierPathWithRect:pathRect];
     
-    [path appendPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(centerHoleInset,
-                                                                        centerHoleInset,
-                                                                        CGRectGetWidth(self.bounds) - centerHoleInset * 2,
-                                                                        CGRectGetHeight(self.bounds) - centerHoleInset * 2)
-                                                cornerRadius:(CGRectGetWidth(self.bounds) - centerHoleInset * 2) / 2.0f]];
+    [path appendPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(positionXHoleInset, positionYHoleInset, diameterHoleInset, diameterHoleInset)
+                                                cornerRadius:diameterHoleInset / 2.0f]];
     
     [path setUsesEvenOddFillRule:YES];
     
     self.boxShape.path = path.CGPath;
     self.boxShape.bounds = pathRect;
     self.boxShape.position = CGPointMake(CGRectGetMidX(pathRect), CGRectGetMidY(pathRect));
-
-    CGFloat diameter = CGRectGetWidth(self.bounds) - (2 * centerHoleInset) - (2 * progressShapeInset);
+    
+    
+    CGFloat progressShapeInset  = PWProgressShapeInsetRatio * CGRectGetWidth(self.bounds);
+    CGFloat diameter = diameterHoleInset - (2 * progressShapeInset);
     CGFloat radius = diameter / 2.0f;
     
     self.progressShape.path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake((CGRectGetWidth(self.bounds) / 2.0f) - (radius / 2.0f),
